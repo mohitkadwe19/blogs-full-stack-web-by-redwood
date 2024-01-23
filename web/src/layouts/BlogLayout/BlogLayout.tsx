@@ -13,6 +13,9 @@ const BlogLayout = ({ children }: BlogLayoutProps) => {
         <nav>
           <ul>
             <li>
+              <Link to={routes.home()}>Home</Link>
+            </li>
+            <li>
               <Link to={routes.about()}>About</Link>
             </li>
             <li>
