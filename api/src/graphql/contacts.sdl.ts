@@ -28,5 +28,6 @@ export const schema = gql`
     createContact(input: CreateContactInput!): Contact! @requireAuth
     updateContact(id: Int!, input: UpdateContactInput!): Contact! @requireAuth
     deleteContact(id: Int!): Contact! @requireAuth
+    contacts: [Contact!]! @requireAuth
   }
 `
