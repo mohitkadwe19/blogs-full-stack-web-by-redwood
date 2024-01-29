@@ -1,16 +1,17 @@
-import { Metadata, useMutation } from '@redwoodjs/web'
+import { MetaTags, useMutation } from '@redwoodjs/web'
 import { toast, Toaster } from '@redwoodjs/web/toast'
 import {
   FieldError,
   Form,
   FormError,
   Label,
-  TextField,
-  TextAreaField,
   Submit,
   SubmitHandler,
+  TextAreaField,
+  TextField,
   useForm,
 } from '@redwoodjs/forms'
+
 import {
   CreateContactMutation,
   CreateContactMutationVariables,
@@ -23,37 +24,34 @@ const CREATE_CONTACT = gql`
     }
   }
 `
+
 interface FormValues {
   name: string
   email: string
   message: string
 }
+
 const ContactPage = () => {
   const formMethods = useForm()
-   const [create, { loading, error }] = useMutation<
-     CreateContactMutation,
-     CreateContactMutationVariables
-   >(CREATE_CONTACT, {
-     onCompleted: () => {
-       toast.success('Thank you for your submission!')
-       formMethods.reset()
-     },
-   })
 
-   const onSubmit: SubmitHandler<FormValues> = (data) => {
-     create({
-       variables: {
-         input: {
-           name: data.name,
-           email: data.email,
-           message: data.message,
-         },
-       },
-     })
-   }
+  const [create, { loading, error }] = useMutation<
+    CreateContactMutation,
+    CreateContactMutationVariables
+  >(CREATE_CONTACT, {
+    onCompleted: () => {
+      toast.success('Thank you for your submission!')
+      formMethods.reset()
+    },
+  })
+
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
+    create({ variables: { input: data } })
+  }
+
   return (
     <>
-      <Metadata title="Contact" description="Contact page" />
+      <MetaTags title="Contact" description="Contact page" />
+
       <Toaster />
       <Form
         onSubmit={onSubmit}
@@ -62,6 +60,7 @@ const ContactPage = () => {
         formMethods={formMethods}
       >
         <FormError error={error} wrapperClassName="form-error" />
+
         <Label name="name" errorClassName="error">
           Name
         </Label>
@@ -79,6 +78,10 @@ const ContactPage = () => {
           name="email"
           validation={{
             required: true,
+            pattern: {
+              value: /^[^@]+@[^.]+\..+$/,
+              message: 'Please enter a valid email address',
+            },
           }}
           errorClassName="error"
         />
