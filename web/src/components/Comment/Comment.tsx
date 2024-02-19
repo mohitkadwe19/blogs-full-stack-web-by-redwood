@@ -1,4 +1,19 @@
+import { useMutation } from '@redwoodjs/web'
+
 import { useAuth } from 'src/auth'
+
+import { QUERY as CommentsQuery } from 'src/components/CommentsCell'
+
+import type { Comment as IComment } from 'types/graphql'
+
+const DELETE = gql`
+  mutation DeleteCommentMutation($id: Int!) {
+    deleteComment(id: $id) {
+      postId
+    }
+  }
+`
+
 const formattedDate = (datetime: ConstructorParameters<typeof Date>[0]) => {
   const parsedDate = new Date(datetime)
   const month = parsedDate.toLocaleString('default', { month: 'long' })
@@ -7,18 +22,26 @@ const formattedDate = (datetime: ConstructorParameters<typeof Date>[0]) => {
 
 // Just a temporary type. We'll replace this later
 interface Props {
-  comment: {
-    name: string
-    createdAt: string
-    body: string
-  }
+  comment: Pick<IComment, 'postId' | 'id' | 'name' | 'createdAt' | 'body'>
 }
 
 const Comment = ({ comment }: Props) => {
   const { hasRole } = useAuth()
+
+  const [deleteComment] = useMutation(DELETE, {
+    refetchQueries: [
+      {
+        query: CommentsQuery,
+        variables: { postId: comment.postId },
+      },
+    ],
+  })
+
   const moderate = () => {
     if (confirm('Are you sure?')) {
-      // TODO: delete comment
+      deleteComment({
+        variables: { id: comment.id },
+      })
     }
   }
   return (
