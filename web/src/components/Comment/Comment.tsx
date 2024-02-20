@@ -1,10 +1,9 @@
+import type { Comment as IComment } from 'types/graphql'
+
 import { useMutation } from '@redwoodjs/web'
 
 import { useAuth } from 'src/auth'
-
 import { QUERY as CommentsQuery } from 'src/components/CommentsCell'
-
-import type { Comment as IComment } from 'types/graphql'
 
 const DELETE = gql`
   mutation DeleteCommentMutation($id: Int!) {
