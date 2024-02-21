@@ -1,5 +1,5 @@
 import type { Prisma } from '@prisma/client'
-import type { ResolverArgs } from '@redwoodjs/graphql-server'
+import { requireAuth } from 'src/lib/auth'
 
 import { db } from 'src/lib/db'
 import { CommentRelationResolvers } from 'types/graphql'
@@ -10,7 +10,7 @@ export const comments = () => {
 
 export const comment = ({ id }: QueryResolvers['comment'] => {
   return db.comment.findUnique({
-    where: { id },
+    where: { id : id },
   })
 }
 
@@ -21,6 +21,7 @@ export const Comment: CommentRelationResolvers = {
 }
 
 export const deleteComment = ({ id }: Prisma.CommentWhereUniqueInput) => {
+  requireAuth({ roles: 'moderator' })
   return db.comment.delete({
     where: { id },
   })
