@@ -1,14 +1,22 @@
 import { AuthenticationError, ForbiddenError } from '@redwoodjs/graphql-server'
 
+import { db } from 'src/lib/db'
+
 import { comments, createComment, deleteComment } from './comments'
 import type { PostOnlyScenario, StandardScenario } from './comments.scenarios'
 
 describe('comments', () => {
-  scenario('returns all comments', async (scenario: StandardScenario) => {
-    const result = await comments()
-
-    expect(result.length).toEqual(Object.keys(scenario.comment).length)
-  })
+  scenario(
+    'returns all comments for a single post from the database',
+    async (scenario) => {
+      const result = await comments({ postId: scenario.comment.jane.postId })
+      const post = await db.post.findUnique({
+        where: { id: scenario.comment.jane.postId },
+        include: { comments: true },
+      })
+      expect(result.length).toEqual(post.comments.length)
+    }
+  )
 
   scenario(
     'postOnly',
@@ -18,9 +26,7 @@ describe('comments', () => {
         input: {
           name: 'Billy Bob',
           body: 'What is your favorite tree bark?',
-          post: {
-            connect: { id: scenario.post.bark.id },
-          },
+          postId: scenario.post.bark.id,
         },
       })
 
@@ -30,6 +36,7 @@ describe('comments', () => {
       expect(comment.createdAt).not.toEqual(null)
     }
   )
+
   scenario(
     'allows a moderator to delete a comment',
     async (scenario: StandardScenario) => {
