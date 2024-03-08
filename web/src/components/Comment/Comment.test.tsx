@@ -3,11 +3,9 @@ import { render, screen, waitFor } from '@redwoodjs/testing'
 import Comment from './Comment'
 
 const COMMENT = {
-  id: 1,
   name: 'John Doe',
   body: 'This is my comment',
   createdAt: '2020-01-02T12:34:56Z',
-  postId: 1,
 }
 
 describe('Comment', () => {
@@ -36,7 +34,6 @@ describe('Comment', () => {
       email: 'moderator@moderator.com',
       roles: 'moderator',
     })
-
     render(<Comment comment={COMMENT} />)
 
     await waitFor(() => expect(screen.getByText('Delete')).toBeInTheDocument())
