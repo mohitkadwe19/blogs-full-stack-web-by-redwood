@@ -3,6 +3,8 @@ import { render, screen, waitFor } from '@redwoodjs/testing'
 import Comment from './Comment'
 
 const COMMENT = {
+  id: 1,
+  postId: 1,
   name: 'John Doe',
   body: 'This is my comment',
   createdAt: '2020-01-02T12:34:56Z',
