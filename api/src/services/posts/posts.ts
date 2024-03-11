@@ -14,7 +14,7 @@ export const post: QueryResolvers['post'] = ({ id }) => {
 
 export const createPost: MutationResolvers['createPost'] = ({ input }) => {
   return db.post.create({
-    data: input,
+    data: { ...input, userId: context.currentUser.id },
   })
 }
 
