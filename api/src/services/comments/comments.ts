@@ -1,16 +1,16 @@
 import type { Prisma } from '@prisma/client'
-import { requireAuth } from 'src/lib/auth'
+import { CommentRelationResolvers, QueryResolvers } from 'types/graphql'
 
+import { requireAuth } from 'src/lib/auth'
 import { db } from 'src/lib/db'
-import { CommentRelationResolvers } from 'types/graphql'
 
 export const comments = () => {
   return db.comment.findMany()
 }
 
-export const comment = ({ id }: QueryResolvers['comment'] => {
+export const comment: QueryResolvers['comment'] = ({ id }) => {
   return db.comment.findUnique({
-    where: { id : id },
+    where: { id: id },
   })
 }
 
