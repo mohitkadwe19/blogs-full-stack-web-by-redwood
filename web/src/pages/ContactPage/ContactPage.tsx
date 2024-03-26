@@ -24,15 +24,14 @@ const CREATE_CONTACT = gql`
     }
   }
 `
-
 interface FormValues {
   name: string
   email: string
   message: string
 }
 
-const ContactPage = () => {
-  const formMethods = useForm()
+const ContactPage: React.FC = () => {
+  const formMethods = useForm<FormValues>()
 
   const [create, { loading, error }] = useMutation<
     CreateContactMutation,
@@ -44,8 +43,17 @@ const ContactPage = () => {
     },
   })
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
-    create({ variables: { input: data } })
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    try {
+      // Perform form validation here using Yup or Formik
+      // If validation fails, display error messages and return early
+
+      await create({ variables: { input: data } })
+    } catch (error) {
+      // Handle form submission error here
+      console.error(error)
+      toast.error('An error occurred while submitting the form.')
+    }
   }
 
   return (
