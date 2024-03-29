@@ -1,7 +1,8 @@
 import type { QueryResolvers, MutationResolvers } from 'types/graphql'
 
-import { db } from 'src/lib/db'
 import { validate } from '@redwoodjs/api'
+
+import { db } from 'src/lib/db'
 
 export const contacts: QueryResolvers['contacts'] = () => {
   return db.contact.findMany()
