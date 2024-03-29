@@ -8,9 +8,9 @@ export const comments = () => {
   return db.comment.findMany()
 }
 
-export const comment: QueryResolvers['comment'] = ({ id }) => {
+export const comment: QueryResolvers['comment'] = (_parent, { id }) => {
   return db.comment.findUnique({
-    where: { id: id },
+    where: { id: Number(id) },
   })
 }
 
