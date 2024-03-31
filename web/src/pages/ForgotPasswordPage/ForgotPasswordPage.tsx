@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { Form, Label, TextField, Submit, FieldError } from '@redwoodjs/forms'
 import { navigate, routes } from '@redwoodjs/router'
@@ -9,6 +9,7 @@ import { useAuth } from 'src/auth'
 
 const ForgotPasswordPage = () => {
   const { isAuthenticated, forgotPassword } = useAuth()
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -22,18 +23,23 @@ const ForgotPasswordPage = () => {
   }, [])
 
   const onSubmit = async (data: { username: string }) => {
-    const response = await forgotPassword(data.username)
+    setIsLoading(true)
 
-    if (response.error) {
-      toast.error(response.error)
-    } else {
-      // The function `forgotPassword.handler` in api/src/functions/auth.js has
-      // been invoked, let the user know how to get the link to reset their
-      // password (sent in email, perhaps?)
-      toast.success(
-        'A link to reset your password was sent to ' + response.email
-      )
-      navigate(routes.login())
+    try {
+      const response = await forgotPassword(data.username)
+
+      const { error, email } = response
+
+      if (error) {
+        toast.error(error)
+      } else {
+        toast.success('A link to reset your password was sent to ' + email)
+        navigate(routes.login())
+      }
+    } catch (error) {
+      toast.error('An error occurred. Please try again.')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -79,7 +85,12 @@ const ForgotPasswordPage = () => {
                   </div>
 
                   <div className="rw-button-group">
-                    <Submit className="rw-button rw-button-blue">Submit</Submit>
+                    <Submit
+                      className="rw-button rw-button-blue"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? 'Submitting...' : 'Submit'}
+                    </Submit>
                   </div>
                 </Form>
               </div>
