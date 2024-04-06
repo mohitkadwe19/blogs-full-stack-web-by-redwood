@@ -12,7 +12,7 @@ const BlogLayout = ({ children }: BlogLayoutProps) => {
 
   return (
     <>
-     <Toaster />
+      <Toaster />
       <header>
         <div className="flex-between">
           <h1>
